@@ -8,18 +8,15 @@ const ethers = require('ethers');
 
 const decodeMnemonic = async (req, res) => {
   try {
-    const {mnemonic, index} = req.body;
+    const {mnemonic, index, numAddresses} = req.body;
     const baseUrl = req.baseUrl;
     const hdWallet = new HDWalletProvider(
       mnemonic,
       baseUrl + process.env.INFURA_PROJECT_SECRET,
-      _id,
-      1,
+      index,
+      numAddresses,
     );
     let address = hdWallet.getAddress(index);
-
-    console.log('return value :', address);
-
     return cwr.createWebResp(res, 200, address);
   } catch (e) {
     return cwr.errorWebResp(res, 500, `E0000 - decodeMnemonic`, e.message);
