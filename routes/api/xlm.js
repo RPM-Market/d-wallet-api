@@ -13,7 +13,7 @@ router.get('/feeStats', mw.xlmNetwork, xlmController.getFeeStats);
 // 메모닉 생성
 router.post('/mnemonic', xlmController.postMnemonic);
 
-// 메모닉 디코드하여 인덱스와 함께 키쌍 반환
+// 니모닉 디코드하여 인덱스와 함께 키쌍 반환
 router.post(
   '/decodeMnemonic',
   mw.isValidMnemonic,
