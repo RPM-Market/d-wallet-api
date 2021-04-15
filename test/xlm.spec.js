@@ -2,7 +2,7 @@ const request = require('supertest');
 const assert = require('assert');
 const axios = require('axios');
 const server = require('../app');
-const {testNetUrl, publicUrl} = require('../config/stellar');
+const {testNetUrl, publicUrl} = require('../config/XLM/stellar');
 
 // Check Horizon Network
 before(async () => {

@@ -124,6 +124,7 @@ const postAccount = async (req, res) => {
       toAddress,
       createFromSecret, // 초기잔액을 충천할 계정 비밀키
       startingBalance, // 초기잔액 수량
+      memo,
     } = req.body;
     const keypair = StellarSdk.Keypair.fromSecret(createFromSecret);
     const txOptions = {
@@ -141,7 +142,7 @@ const postAccount = async (req, res) => {
           startingBalance, // 계정 유지를 위한 최소 1XLM 이상 필요
         }),
       )
-      .addMemo(StellarSdk.Memo.text('Create Account'))
+      .addMemo(StellarSdk.Memo.text(memo || 'Create Account'))
       .setTimeout(xlmUtils.TIMEOUT)
       .build();
     transaction.sign(keypair);

@@ -23,6 +23,7 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 const assetsRouter = require('./routes/api/assets');
 const xlmRouter = require('./routes/api/xlm');
+const ethRouter = require('./routes/api/eth');
 
 const app = express();
 
@@ -45,6 +46,7 @@ const version = '/v1';
 app.use('/', indexRouter);
 app.use(`${version}/assets`, assetsRouter);
 app.use(`${version}/xlm`, xlmRouter);
+app.use(`${version}/eth`, ethRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
