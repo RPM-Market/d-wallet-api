@@ -8,10 +8,16 @@ router.get('/etherBalance', mw.web3, ethController.getEtherBalance);
 
 router.get('/tokenBalance', mw.web3, ethController.getTokenBalance);
 
-router.post('/decodeMnemonic', ethController.postDecodeMnemonic);
+router.post('/decodeMnemonic', mw.checkMnemonic, ethController.postDecodeMnemonic);
 
 router.post('/sendEther', mw.web3, ethController.postSendEther);
 
 router.post('/sendToken', mw.web3, ethController.postSendToken);
+
+router.get('/generateMnemonic', ethController.getGenerateMnemonic);
+
+router.get('/validateMnemonic', ethController.getValidateMnemonic);
+
+router.get('/currentGasPrice', mw.web3, ethController.getCurrentGasPrice);
 
 module.exports = router;

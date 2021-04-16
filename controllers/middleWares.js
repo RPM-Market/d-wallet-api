@@ -2,7 +2,7 @@ const StellarSdk = require('stellar-sdk');
 const StellarHDWallet = require('stellar-hd-wallet');
 const cwr = require('../utils/createWebResp');
 const stellarConfig = require('../config/XLM/stellar');
-const infura = require('../config/ETH/infura');
+const eth = require('../config/ETH/eth');
 const Web3 = require('web3');
 
 const isValidMnemonic = async (req, res, next) => {
@@ -70,7 +70,7 @@ const web3 = async (req, res, next) => {
   try {
     const endpoint = req.body.endpoint || req.query.endpoint;
 
-    req.baseUrl = infura.switchBaseUrl(endpoint);
+    req.baseUrl = eth.switchBaseUrl(endpoint);
 
     req.web3 = new Web3(new Web3.providers.HttpProvider(req.baseUrl + process.env.INFURA_PROJECT_ID));
     next();
@@ -79,9 +79,25 @@ const web3 = async (req, res, next) => {
   }
 };
 
+const checkMnemonic = async (req, res, next) => {
+  try {
+    const index = req.body.index || req.query.index;
+
+    if (index < eth.minIDValue || index > eth.maxIDValue)
+    {
+      return cwr.errorWebResp(res, 500, `E0000 - index required (0 ~ 2147483647)`);
+    }
+
+    next();
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, `E0000 - checkMnemonic`, e.message);
+  }
+};
+
 module.exports = {
   isValidMnemonic,
   xlmNetwork,
   xlmAsset,
   web3,
+  checkMnemonic,
 };

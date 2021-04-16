@@ -1,5 +1,5 @@
 // erc20 표준 함수
-exports.human_standard_token_abi = [
+exports.StandardABI = [
   {
     constant: true,
     inputs: [],
