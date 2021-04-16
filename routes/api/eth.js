@@ -8,7 +8,11 @@ router.get('/etherBalance', mw.web3, ethController.getEtherBalance);
 
 router.get('/tokenBalance', mw.web3, ethController.getTokenBalance);
 
-router.post('/decodeMnemonic', mw.checkMnemonic, ethController.postDecodeMnemonic);
+router.post(
+  '/decodeMnemonic',
+  mw.checkMnemonic,
+  ethController.postDecodeMnemonic,
+);
 
 router.post('/sendEther', mw.web3, ethController.postSendEther);
 

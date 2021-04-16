@@ -18,7 +18,6 @@ const maxIDValue = 2147483647;
 const minIDValue = 0;
 const defaultWalletPath = "m/44'/60'/0'/0/";
 
-
 module.exports = {
   switchBaseUrl,
   defaultGasAvg,

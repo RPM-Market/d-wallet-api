@@ -72,7 +72,11 @@ const web3 = async (req, res, next) => {
 
     req.baseUrl = eth.switchBaseUrl(endpoint);
 
-    req.web3 = new Web3(new Web3.providers.HttpProvider(req.baseUrl + process.env.INFURA_PROJECT_ID));
+    req.web3 = new Web3(
+      new Web3.providers.HttpProvider(
+        req.baseUrl + process.env.INFURA_PROJECT_ID,
+      ),
+    );
     next();
   } catch (e) {
     return cwr.errorWebResp(res, 500, `E0000 - infuraBaseUrl`, e.message);
@@ -83,9 +87,12 @@ const checkMnemonic = async (req, res, next) => {
   try {
     const index = req.body.index || req.query.index;
 
-    if (index < eth.minIDValue || index > eth.maxIDValue)
-    {
-      return cwr.errorWebResp(res, 500, `E0000 - index required (0 ~ 2147483647)`);
+    if (index < eth.minIDValue || index > eth.maxIDValue) {
+      return cwr.errorWebResp(
+        res,
+        500,
+        `E0000 - index required (0 ~ 2147483647)`,
+      );
     }
 
     next();
