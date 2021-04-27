@@ -27,7 +27,7 @@ const postIssue = async (req, res) => {
     if (changeTrust) {
       const receiver = await server.loadAccount(receivingKeys.publicKey());
       const transaction = new StellarSdk.TransactionBuilder(receiver, {
-        fee: 100,
+        fee: StellarSdk.BASE_FEE,
         networkPassphrase: req.networkPassphrase,
       })
         // The `changeTrust` operation creates (or alters) a trustline
@@ -50,7 +50,7 @@ const postIssue = async (req, res) => {
     // Second, the issuing account actually sends a payment using the asset
     const issuer = await server.loadAccount(issuingKeys.publicKey());
     const paymentTransaction = new StellarSdk.TransactionBuilder(issuer, {
-      fee: 100,
+      fee: StellarSdk.BASE_FEE,
       networkPassphrase: req.networkPassphrase,
     })
       .addOperation(
@@ -79,7 +79,7 @@ const postToml = async (req, res) => {
     const issuer = await server.loadAccount(issuingKeys.publicKey());
 
     const transaction = new StellarSdk.TransactionBuilder(issuer, {
-      fee: 100, // StellarSdk.BASE_FEE // 0.00001 XLM XLM
+      fee: StellarSdk.BASE_FEE, // StellarSdk.BASE_FEE // 0.00001 XLM XLM
       networkPassphrase: req.networkPassphrase,
     })
       .addOperation(
