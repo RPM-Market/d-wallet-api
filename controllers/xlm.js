@@ -226,6 +226,36 @@ const postTrustAsset = async (req, res) => {
   }
 };
 
+const deleteTrustAsset = async (req, res) => {
+  try {
+    const {asset, server} = req;
+    const txOptions = {
+      fee: StellarSdk.BASE_FEE,
+      networkPassphrase: req.networkPassphrase,
+    }
+    const keypair = StellarSdk.Keypair.fromSecret(req.body.secretKey);
+    const fromAddress = keypair.publicKey();
+    const loadedAccount = await server.loadAccount(fromAddress);
+    const transaction = new StellarSdk.TransactionBuilder(
+      loadedAccount,
+      txOptions,
+    )
+      .addOperation(StellarSdk.Operation.changeTrust({asset, limit: '0'}))
+      .setTimeout(xlmUtils.TIMEOUT)
+      .build();
+    transaction.sign(keypair);
+    const resp = await server.submitTransaction(transaction);
+    return cwr.createWebResp(res, 200, resp);
+  } catch (e) {
+    return cwr.errorWebResp(
+      res,
+      500,
+      `E0000 - deleteTrustAsset`,
+      xlmUtils.parseOperationError(e),
+    );
+  }
+}
+
 const getLastBlock = async (req, res) => {
   try {
     const {serverUrl} = req;
@@ -387,8 +417,8 @@ module.exports = {
   getAccountDetail,
   postAccount,
   postPayment,
-  // postEarnCoin,
   postTrustAsset,
+  deleteTrustAsset,
   getLastBlock,
   getTransactions,
   getTxId,

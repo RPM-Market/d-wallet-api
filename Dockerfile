@@ -1,4 +1,4 @@
-FROM node:14.16.0
+FROM node:14.16.1
 MAINTAINER whackur<whackur@daiblab.com>
 
 # 도커안의 앱 디렉터리 생성
