@@ -196,7 +196,7 @@ const getCurrentGasPrice = async (req, res) => {
     for (let chunk of chunkedLinks) {
       const resolvedProducts = await Promise.all(chunk);
       resolvedProducts.forEach((product) => {
-        if (product.input.length == 138)
+        if (product.input.length === 138)
         {
           txsGas.push(product.gasPrice);
           txLength += 1;
@@ -212,25 +212,23 @@ const getCurrentGasPrice = async (req, res) => {
     lastGasPrice.transantionCount = txLength;
     return cwr.createWebResp(res, 200, lastGasPrice);
   } catch (e) {
-    return cwr.errorWebResp(res, 500, 'test args error', e.message);
+    return cwr.errorWebResp(res, 500, 'E0000 - getCurrentGasPrice', e.message);
   }
 };
 
 const getCurrentGasPriceFromEthGasStation = async (req, res) => {
   try {
-    let response = await axios.get('https://ethgasstation.info/json/ethgasAPI.json');
-    let prices = {
+    const response = await axios.get('https://ethgasstation.info/json/ethgasAPI.json');
+    const prices = {
       low: response.data.safeLow.toString() / 10,
       medium: response.data.average.toString() / 10,
       high: response.data.fast.toString() / 10,
       blockNumber: response.data.blockNum
     };
-
     console.log(response.data);
-
     return cwr.createWebResp(res, 200, prices);
   } catch (e) {
-    return cwr.errorWebResp(res, 500, 'test args error', e.message);
+    return cwr.errorWebResp(res, 500, 'E0000 - getCurrentGasPriceFromEthGasStation', e.message);
   }
 };
 

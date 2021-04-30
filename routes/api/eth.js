@@ -24,6 +24,9 @@ router.get('/validateMnemonic', ethController.getValidateMnemonic);
 
 router.get('/currentGasPrice', mw.web3, ethController.getCurrentGasPrice);
 
-router.get('/currentGasPriceFromEthGasStation', ethController.getCurrentGasPriceFromEthGasStation);
+router.get(
+  '/currentGasPriceFromEthGasStation',
+  ethController.getCurrentGasPriceFromEthGasStation,
+);
 
 module.exports = router;
