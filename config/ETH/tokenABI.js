@@ -1,4 +1,4 @@
-// erc20 표준 함수
+// erc20 Standard Function
 exports.StandardABI = [
   {
     constant: true,
