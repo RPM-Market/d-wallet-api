@@ -32,7 +32,8 @@ const getTokenBalance = async (req, res) => {
       contractAddress,
     );
     const decimal = Math.pow(10, await contract.methods.decimals().call());
-    const balance = await contract.methods.balanceOf(walletAddress).call() / decimal;
+    const balance =
+      (await contract.methods.balanceOf(walletAddress).call()) / decimal;
     return cwr.createWebResp(res, 200, balance);
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - getTokenBalance', e.message);
@@ -64,14 +65,22 @@ const postSendEther = async (req, res) => {
     const rawTx = {
       from: myWalletAddress,
       to: toWalletAddress,
-      value: req.web3.utils.toHex(req.web3.utils.toWei(amountEther.toString(), 'ether')),
-      gasPrice: req.web3.utils.toHex(req.web3.utils.toWei(gasPrice.toString(), 'gwei')),
+      value: req.web3.utils.toHex(
+        req.web3.utils.toWei(amountEther.toString(), 'ether'),
+      ),
+      gasPrice: req.web3.utils.toHex(
+        req.web3.utils.toWei(gasPrice.toString(), 'gwei'),
+      ),
       gasLimit: req.web3.utils.toHex(gasLimit?.toString()),
     };
 
-    const account = req.web3.eth.accounts.privateKeyToAccount(myWalletPrivateKey);
+    const account = req.web3.eth.accounts.privateKeyToAccount(
+      myWalletPrivateKey,
+    );
     const signedTx = await account.signTransaction(rawTx);
-    const txInfo = await req.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    const txInfo = await req.web3.eth.sendSignedTransaction(
+      signedTx.rawTransaction,
+    );
     return cwr.createWebResp(res, 200, txInfo);
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - postSendEther', e.message);
@@ -87,24 +96,35 @@ const postSendToken = async (req, res) => {
       amountToken,
       gasPrice,
       gasLimit,
-      contractAddress
+      contractAddress,
     } = req.body;
 
-    const contract = new req.web3.eth.Contract(tokenABI.StandardABI,contractAddress);
+    const contract = new req.web3.eth.Contract(
+      tokenABI.StandardABI,
+      contractAddress,
+    );
     const decimal = Math.pow(10, await contract.methods.decimals().call());
-    let contractRawTx = await contract.methods.transfer(toWalletAddress, req.web3.utils.toHex(amountToken * decimal)).encodeABI();
+    let contractRawTx = await contract.methods
+      .transfer(toWalletAddress, req.web3.utils.toHex(amountToken * decimal))
+      .encodeABI();
 
     const rawTx = {
-      gasPrice: req.web3.utils.toHex(req.web3.utils.toWei(gasPrice.toString(), 'gwei')),
+      gasPrice: req.web3.utils.toHex(
+        req.web3.utils.toWei(gasPrice.toString(), 'gwei'),
+      ),
       gasLimit: req.web3.utils.toHex(gasLimit?.toString()),
       to: contractAddress,
       from: myWalletAddress,
       data: contractRawTx,
-      value: '0x0'
+      value: '0x0',
     };
-    const account = req.web3.eth.accounts.privateKeyToAccount(myWalletPrivateKey);
+    const account = req.web3.eth.accounts.privateKeyToAccount(
+      myWalletPrivateKey,
+    );
     const signedTx = await account.signTransaction(rawTx);
-    const txInfo = await req.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    const txInfo = await req.web3.eth.sendSignedTransaction(
+      signedTx.rawTransaction,
+    );
     return cwr.createWebResp(res, 200, txInfo);
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - postSendToken', e.message);
@@ -157,7 +177,8 @@ const getCurrentGasPrice = async (req, res) => {
     let block = await getBlock();
     let txs = [];
     let txsGas = [];
-    const chunkSize = block.transactions.length / Math.sqrt(block.transactions.length);
+    const chunkSize =
+      block.transactions.length / Math.sqrt(block.transactions.length);
     for (let txid = 0; txid < block.transactions.length; txid++) {
       txs.push(req.web3.eth.getTransaction(block.transactions[txid]));
     }
@@ -177,8 +198,7 @@ const getCurrentGasPrice = async (req, res) => {
     for (let chunk of chunkedLinks) {
       const resolvedProducts = await Promise.all(chunk);
       resolvedProducts.forEach((product) => {
-        if (product.input.length === 138)
-        {
+        if (product.input.length === 138) {
           txsGas.push(product.gasPrice);
           txLength += 1;
         }
@@ -186,9 +206,18 @@ const getCurrentGasPrice = async (req, res) => {
     }
     let sumGas = txsGas.reduce((a, b) => parseInt(a) + parseInt(b), 0);
     lastGasPrice.blockNumber = block.number;
-    lastGasPrice.avg = req.web3.utils.fromWei(parseInt(sumGas / txLength).toString(), 'gwei');
-    lastGasPrice.min = req.web3.utils.fromWei((Math.min(...txsGas)).toString(), 'gwei');
-    lastGasPrice.max = req.web3.utils.fromWei((Math.max(...txsGas)).toString(), 'gwei');
+    lastGasPrice.avg = req.web3.utils.fromWei(
+      parseInt(sumGas / txLength).toString(),
+      'gwei',
+    );
+    lastGasPrice.min = req.web3.utils.fromWei(
+      Math.min(...txsGas).toString(),
+      'gwei',
+    );
+    lastGasPrice.max = req.web3.utils.fromWei(
+      Math.max(...txsGas).toString(),
+      'gwei',
+    );
     lastGasPrice.total = req.web3.utils.fromWei(sumGas.toString(), 'gwei');
     lastGasPrice.transantionCount = txLength;
     return cwr.createWebResp(res, 200, lastGasPrice);
@@ -199,16 +228,23 @@ const getCurrentGasPrice = async (req, res) => {
 
 const getCurrentGasPriceFromEthGasStation = async (req, res) => {
   try {
-    const response = await axios.get('https://ethgasstation.info/json/ethgasAPI.json');
+    const response = await axios.get(
+      'https://ethgasstation.info/json/ethgasAPI.json',
+    );
     const prices = {
       low: response.data.safeLow.toString() / 10,
       medium: response.data.average.toString() / 10,
       high: response.data.fast.toString() / 10,
-      blockNumber: response.data.blockNum
+      blockNumber: response.data.blockNum,
     };
     return cwr.createWebResp(res, 200, prices);
   } catch (e) {
-    return cwr.errorWebResp(res, 500, 'E0000 - getCurrentGasPriceFromEthGasStation', e.message);
+    return cwr.errorWebResp(
+      res,
+      500,
+      'E0000 - getCurrentGasPriceFromEthGasStation',
+      e.message,
+    );
   }
 };
 
