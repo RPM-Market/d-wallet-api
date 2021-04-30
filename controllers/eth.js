@@ -1,8 +1,9 @@
 const cwr = require('../utils/createWebResp');
-const tokenABI = require('../config/ETH/tokenABI');
+const tokenABI = require('../config/ETH/StandardTokenABI');
 const bip39 = require('bip39');
 const ethers = require('ethers');
 const eth = require('../config/ETH/eth');
+const axios = require('axios');
 
 const postDecodeMnemonic = async (req, res) => {
   try {
@@ -59,29 +60,19 @@ const postSendEther = async (req, res) => {
       gasPrice,
       gasLimit,
     } = req.body;
-    const nonce = await req.web3.eth.getTransactionCount(
-      myWalletAddress,
-      'pending',
-    );
+
     const rawTx = {
-      nonce: nonce,
       from: myWalletAddress,
       to: toWalletAddress,
-      value: req.web3.utils.toHex(
-        req.web3.utils.toWei(amountEther.toString(), 'ether'),
-      ),
-      gasPrice: req.web3.utils.toHex(
-        req.web3.utils.toWei(gasPrice.toString(), 'Gwei'),
-      ),
+      value: req.web3.utils.toHex(req.web3.utils.toWei(amountEther.toString(), 'ether')),
+      gasPrice: req.web3.utils.toHex(req.web3.utils.toWei(gasPrice.toString(), 'gwei')),
       gasLimit: req.web3.utils.toHex(gasLimit?.toString()),
     };
-    const account = req.web3.eth.accounts.privateKeyToAccount(
-      myWalletPrivateKey,
-    );
+
+    const account = req.web3.eth.accounts.privateKeyToAccount(myWalletPrivateKey);
     const signedTx = await account.signTransaction(rawTx);
-    const txInfo = await req.web3.eth.sendSignedTransaction(
-      signedTx.rawTransaction,
-    );
+    const txInfo = await req.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+
     return cwr.createWebResp(res, 200, txInfo);
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - postSendEther', e.message);
@@ -185,7 +176,7 @@ const getCurrentGasPrice = async (req, res) => {
     let block = await getBlock();
     let txs = [];
     let txsGas = [];
-    const chunkSize = block.transactions.length / 4;
+    const chunkSize = block.transactions.length / Math.sqrt(block.transactions.length);
     for (let txid = 0; txid < block.transactions.length; txid++) {
       txs.push(req.web3.eth.getTransaction(block.transactions[txid]));
     }
@@ -201,20 +192,43 @@ const getCurrentGasPrice = async (req, res) => {
     };
 
     const chunkedLinks = arrayToChunks(txs, chunkSize);
+    let txLength = 0;
     for (let chunk of chunkedLinks) {
       const resolvedProducts = await Promise.all(chunk);
       resolvedProducts.forEach((product) => {
-        txsGas.push(product.gas);
+        if (product.input.length == 138)
+        {
+          txsGas.push(product.gasPrice);
+          txLength += 1;
+        }
       });
     }
-    let sumGas = txsGas.reduce((a, b) => a + b, 0);
+    let sumGas = txsGas.reduce((a, b) => parseInt(a) + parseInt(b), 0);
     lastGasPrice.blockNumber = block.number;
-    lastGasPrice.avg = sumGas / block.transactions.length;
-    lastGasPrice.min = Math.min(...txsGas);
-    lastGasPrice.max = Math.max(...txsGas);
-    lastGasPrice.total = sumGas;
-    lastGasPrice.transantionCount = block.transactions.length;
+    lastGasPrice.avg = req.web3.utils.fromWei(parseInt(sumGas / txLength).toString(), 'gwei');
+    lastGasPrice.min = req.web3.utils.fromWei((Math.min(...txsGas)).toString(), 'gwei');
+    lastGasPrice.max = req.web3.utils.fromWei((Math.max(...txsGas)).toString(), 'gwei');
+    lastGasPrice.total = req.web3.utils.fromWei(sumGas.toString(), 'gwei');
+    lastGasPrice.transantionCount = txLength;
     return cwr.createWebResp(res, 200, lastGasPrice);
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, 'test args error', e.message);
+  }
+};
+
+const getCurrentGasPriceFromEthGasStation = async (req, res) => {
+  try {
+    let response = await axios.get('https://ethgasstation.info/json/ethgasAPI.json');
+    let prices = {
+      low: response.data.safeLow.toString() / 10,
+      medium: response.data.average.toString() / 10,
+      high: response.data.fast.toString() / 10,
+      blockNumber: response.data.blockNum
+    };
+
+    console.log(response.data);
+
+    return cwr.createWebResp(res, 200, prices);
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'test args error', e.message);
   }
@@ -229,4 +243,5 @@ module.exports = {
   getGenerateMnemonic,
   getValidateMnemonic,
   getCurrentGasPrice,
+  getCurrentGasPriceFromEthGasStation,
 };
