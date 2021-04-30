@@ -34,7 +34,7 @@ describe('Stellar APIs', () => {
       })
       .expect(200, done);
   });
-  it('메모닉 생성', (done) => {
+  it('니모닉 생성', (done) => {
     agent
       .post('/v1/xlm/mnemonic')
       .expect((res) => {

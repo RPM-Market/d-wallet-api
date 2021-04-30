@@ -196,41 +196,6 @@ const postPayment = async (req, res) => {
   }
 };
 
-// const postEarnCoin = async (req, res) => {
-//   try {
-//     const {server} = req;
-//     const {publicKey} = req.body;
-//     // DB 연동 시 생성됨, stellar-core new-db 명령어에서 확인 가능
-//     const keypair = StellarSdk.Keypair.fromSecret(
-//       'PUT_SECRET_KEY_IN_HERE'
-//     );
-//     const result = await server
-//       .loadAccount(keypair.publicKey())
-//       .then(function (sourceAccount) {
-//         const transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-//           .addOperation(
-//             StellarSdk.Operation.createAccount({
-//               destination: publicKey,
-//               startingBalance: '1000',
-//             }),
-//           )
-//           .addMemo(StellarSdk.Memo.text('Test Transaction'))
-//           .setTimeout(xlmUtils.TIMEOUT)
-//           .build();
-//         transaction.sign(keypair);
-//       });
-//     // todo submit transaction 하면 될듯? 빠트림...
-//     return cwr.createWebResp(res, 200, result);
-//   } catch (e) {
-//     return cwr.errorWebResp(
-//       res,
-//       500,
-//       `E0000 - postEarnCoin`,
-//       xlmUtils.parseOperationError(e),
-//     );
-//   }
-// };
-
 const postTrustAsset = async (req, res) => {
   try {
     const {asset, server} = req;

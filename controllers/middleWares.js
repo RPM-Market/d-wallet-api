@@ -5,6 +5,7 @@ const stellarConfig = require('../config/XLM/stellar');
 const eth = require('../config/ETH/eth');
 const Web3 = require('web3');
 
+////////////////////// Middleware for XLM //////////////////////
 const isValidMnemonic = async (req, res, next) => {
   try {
     if (!StellarHDWallet.validateMnemonic(req.body.mnemonic)) {
@@ -52,7 +53,7 @@ const xlmAsset = async (req, res, next) => {
       // Native(XLM)
       req.asset = StellarSdk.Asset.native();
     } else if (!asset || !assetPub) {
-      // Asset need PublicAddress
+      // Asset needs PublicAddress
       return cwr.errorWebResp(res, 403, `E0000 - Need asset & assetPub`);
     } else if (asset && assetPub) {
       req.asset = new StellarSdk.Asset(asset, assetPub);
@@ -65,13 +66,11 @@ const xlmAsset = async (req, res, next) => {
   }
 };
 
-// ETH
+////////////////////// Middleware for ETH //////////////////////
 const web3 = async (req, res, next) => {
   try {
     const endpoint = req.body.endpoint || req.query.endpoint;
-
     req.baseUrl = eth.switchBaseUrl(endpoint);
-
     req.web3 = new Web3(
       new Web3.providers.HttpProvider(
         req.baseUrl + process.env.INFURA_PROJECT_ID,
@@ -86,7 +85,6 @@ const web3 = async (req, res, next) => {
 const checkMnemonic = async (req, res, next) => {
   try {
     const index = req.body.index || req.query.index;
-
     if (index < eth.minIDValue || index > eth.maxIDValue) {
       return cwr.errorWebResp(
         res,
@@ -94,7 +92,6 @@ const checkMnemonic = async (req, res, next) => {
         `E0000 - index required (0 ~ 2147483647)`,
       );
     }
-
     next();
   } catch (e) {
     return cwr.errorWebResp(res, 500, `E0000 - checkMnemonic`, e.message);

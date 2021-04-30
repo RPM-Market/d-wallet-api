@@ -10,7 +10,7 @@ router.post('/key', xlmController.postKey);
 // 실시간 네트워크 수수료 조회
 router.get('/feeStats', mw.xlmNetwork, xlmController.getFeeStats);
 
-// 메모닉 생성
+// 니모닉 생성
 router.post('/mnemonic', xlmController.postMnemonic);
 
 // 니모닉 디코드하여 인덱스와 함께 키쌍 반환
@@ -49,7 +49,7 @@ router.post(
 /*
 해당 동작으로 계정 소유자는 XLM 토큰(RPM)에 대해 trustline을 추가할 수 있음
 금액을 지불하기전 XLM 토큰에 대해 trustline 추가 필요
-lumen (public)은 작업 불필요
+lumen (Native)은 작업 불필요
 자산 신뢰 이후 사용자는 RPM로 부터 자산을 수령받을 수 있음
 주의할 점은 신뢰 동작에도 미리 XLM 코인을 소유하고 있어야 동작에 필요한
 비용을 지불할 수 있음
@@ -60,10 +60,6 @@ router.post(
   mw.xlmAsset, // 발행된 자산 (token)
   xlmController.postTrustAsset,
 );
-
-// todo 계정 생성과 함께 root account 로 부터 코인 받기, 자체구축 내트워크용
-// todo 직접 구축한 커스텀 네트워크에서만 가능하지만 동작 잘 안됨
-// router.post('/earnCoin', mw.xlmNetwork, xlmController.postEarnCoin);
 
 // 마지막 블럭 높이 조회
 router.get('/lastBlockNo', mw.xlmNetwork, xlmController.getLastBlock);
