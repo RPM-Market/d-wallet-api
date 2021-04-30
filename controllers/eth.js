@@ -31,8 +31,8 @@ const getTokenBalance = async (req, res) => {
       tokenABI.StandardABI,
       contractAddress,
     );
-    let balance = await contract.methods.balanceOf(walletAddress).call();
-    balance = req.web3.utils.fromWei(balance.toString(), 'ether');
+    const decimal = Math.pow(10, await contract.methods.decimals().call());
+    const balance = await contract.methods.balanceOf(walletAddress).call() / decimal;
     return cwr.createWebResp(res, 200, balance);
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - getTokenBalance', e.message);
@@ -72,7 +72,6 @@ const postSendEther = async (req, res) => {
     const account = req.web3.eth.accounts.privateKeyToAccount(myWalletPrivateKey);
     const signedTx = await account.signTransaction(rawTx);
     const txInfo = await req.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-
     return cwr.createWebResp(res, 200, txInfo);
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - postSendEther', e.message);
@@ -88,43 +87,25 @@ const postSendToken = async (req, res) => {
       amountToken,
       gasPrice,
       gasLimit,
-      contractAddress,
+      contractAddress
     } = req.body;
-    const contract = new req.web3.eth.Contract(
-      tokenABI.StandardABI,
-      contractAddress,
-    );
-    let nonce = await req.web3.eth.getTransactionCount(
-      myWalletAddress,
-      'pending',
-    );
-    let contractRawTx = await contract.methods
-      .transfer(
-        toWalletAddress,
-        req.web3.utils.toHex(
-          req.web3.utils.toWei(amountToken.toString(), 'ether'),
-        ),
-      )
-      .encodeABI();
+
+    const contract = new req.web3.eth.Contract(tokenABI.StandardABI,contractAddress);
+    const decimal = Math.pow(10, await contract.methods.decimals().call());
+    let contractRawTx = await contract.methods.transfer(toWalletAddress, req.web3.utils.toHex(amountToken * decimal)).encodeABI();
+
     const rawTx = {
-      nonce: req.web3.utils.toHex(nonce),
-      gasLimit: req.web3.utils.toHex(gasLimit),
-      gasPrice: req.web3.utils.toHex(
-        req.web3.utils.toWei(gasPrice.toString(), 'gwei'),
-      ),
+      gasPrice: req.web3.utils.toHex(req.web3.utils.toWei(gasPrice.toString(), 'gwei')),
+      gasLimit: req.web3.utils.toHex(gasLimit?.toString()),
       to: contractAddress,
       from: myWalletAddress,
       data: contractRawTx,
-      value: '0x0',
+      value: '0x0'
     };
-    const account = req.web3.eth.accounts.privateKeyToAccount(
-      myWalletPrivateKey,
-    );
+    const account = req.web3.eth.accounts.privateKeyToAccount(myWalletPrivateKey);
     const signedTx = await account.signTransaction(rawTx);
-    const result = await req.web3.eth.sendSignedTransaction(
-      signedTx.rawTransaction,
-    );
-    return cwr.createWebResp(res, 200, result);
+    const txInfo = await req.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    return cwr.createWebResp(res, 200, txInfo);
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - postSendToken', e.message);
   }
@@ -225,7 +206,6 @@ const getCurrentGasPriceFromEthGasStation = async (req, res) => {
       high: response.data.fast.toString() / 10,
       blockNumber: response.data.blockNum
     };
-    console.log(response.data);
     return cwr.createWebResp(res, 200, prices);
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - getCurrentGasPriceFromEthGasStation', e.message);
