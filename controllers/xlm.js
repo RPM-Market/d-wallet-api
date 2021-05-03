@@ -232,7 +232,7 @@ const deleteTrustAsset = async (req, res) => {
     const txOptions = {
       fee: StellarSdk.BASE_FEE,
       networkPassphrase: req.networkPassphrase,
-    }
+    };
     const keypair = StellarSdk.Keypair.fromSecret(req.body.secretKey);
     const fromAddress = keypair.publicKey();
     const loadedAccount = await server.loadAccount(fromAddress);
@@ -254,7 +254,7 @@ const deleteTrustAsset = async (req, res) => {
       xlmUtils.parseOperationError(e),
     );
   }
-}
+};
 
 const getLastBlock = async (req, res) => {
   try {

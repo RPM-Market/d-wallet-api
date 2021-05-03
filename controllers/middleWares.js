@@ -98,10 +98,22 @@ const checkMnemonic = async (req, res, next) => {
   }
 };
 
+const etherscan = async (req, res, next) => {
+  try {
+    req.etherscan = require('etherscan-api').init(
+      process.env.ETHERSCAN_API_KEY,
+    );
+    next();
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, `E0000 - infuraBaseUrl`, e.message);
+  }
+};
+
 module.exports = {
   isValidMnemonic,
   xlmNetwork,
   xlmAsset,
   web3,
   checkMnemonic,
+  etherscan,
 };

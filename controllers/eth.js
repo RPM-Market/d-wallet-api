@@ -51,6 +51,16 @@ const getEtherBalance = async (req, res) => {
   }
 };
 
+const getEtherHistory = async (req, res) => {
+  try {
+    const {walletAddress} = req.query;
+    let balance = await req.web3.eth.get;
+    return cwr.createWebResp(res, 200, balance);
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, 'E0000 - getEtherBalance', e.message);
+  }
+};
+
 const postSendEther = async (req, res) => {
   try {
     const {
@@ -131,22 +141,25 @@ const postSendToken = async (req, res) => {
   }
 };
 
-const getGenerateMnemonic = async (req, res) => {
+const postGenerateMnemonic = async (req, res) => {
   try {
     const mnemonic = bip39.generateMnemonic();
     if (bip39.validateMnemonic(mnemonic)) {
-      return cwr.createWebResp(res, 200, mnemonic);
-    } else {
-      return cwr.errorWebResp(
-        res,
-        500,
-        'generateMnemonic error',
-        '니모닉 발급 실패',
-      );
+      return cwr.createWebResp(res, 200, {mnemonic});
     }
-    return cwr.createWebResp(res, 200, true);
+    return cwr.errorWebResp(
+      res,
+      500,
+      'generateMnemonic error',
+      '니모닉 발급 실패',
+    );
   } catch (e) {
-    return cwr.errorWebResp(res, 500, 'E0000 - GetGenerateMnemonic', e.message);
+    return cwr.errorWebResp(
+      res,
+      500,
+      'E0000 - postGenerateMnemonic',
+      e.message,
+    );
   }
 };
 
@@ -248,14 +261,98 @@ const getCurrentGasPriceFromEthGasStation = async (req, res) => {
   }
 };
 
+const getTransactionListFromAddress = async (req, res) => {
+  try {
+    const {
+      address,
+      startBlock,
+      endBlock,
+      page,
+      offset,
+      sort,
+      isError,
+    } = req.query;
+    const txlist = await req.etherscan.account.txlist(
+      address,
+      startBlock,
+      endBlock,
+      page,
+      offset,
+      sort,
+    );
+    if (isError) {
+      const filteredTxlist = txlist.result.reduce((filteredTxlist, tx) => {
+        if (tx.isError === isError) {
+          filteredTxlist.push(tx);
+        }
+        return filteredTxlist;
+      }, []);
+      return cwr.createWebResp(res, 200, filteredTxlist);
+    }
+    return cwr.createWebResp(res, 200, txlist.result);
+  } catch (e) {
+    return cwr.errorWebResp(
+      res,
+      500,
+      'E0000 - getTransactionListFromAddress',
+      e.message,
+    );
+  }
+};
+
+const getTokenTransactionListFromAddress = async (req, res) => {
+  try {
+    const {walletAddress, tokenAddress, startBlock, endBlock, sort} = req.query;
+    const tokenTxList = await req.etherscan.account.tokentx(
+      walletAddress,
+      tokenAddress,
+      startBlock,
+      endBlock,
+      sort,
+    );
+    return cwr.createWebResp(res, 200, tokenTxList.result);
+  } catch (e) {
+    return cwr.errorWebResp(
+      res,
+      500,
+      'E0000 - getTokenTransactionListFromAddress',
+      e.message,
+    );
+  }
+};
+
+const getTransactionInfo = async (req, res) => {
+  try {
+    const {txHash} = req.query;
+    const txInfo = await req.web3.eth.getTransaction(txHash);
+    return cwr.createWebResp(res, 200, txInfo);
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, 'E0000 - getTransactionInfo', e.message);
+  }
+};
+
+const getBlockInfo = async (req, res) => {
+  try {
+    const {blockHash} = req.query;
+    const blockInfo = await req.web3.eth.getBlock(blockHash);
+    return cwr.createWebResp(res, 200, blockInfo);
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, 'E0000 - getBlockInfo', e.message);
+  }
+};
+
 module.exports = {
   postDecodeMnemonic,
   getEtherBalance,
   getTokenBalance,
   postSendEther,
   postSendToken,
-  getGenerateMnemonic,
+  postGenerateMnemonic,
   getValidateMnemonic,
   getCurrentGasPrice,
   getCurrentGasPriceFromEthGasStation,
+  getTransactionListFromAddress,
+  getTokenTransactionListFromAddress,
+  getTransactionInfo,
+  getBlockInfo,
 };

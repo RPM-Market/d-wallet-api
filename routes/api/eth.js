@@ -18,7 +18,7 @@ router.post('/sendEther', mw.web3, ethController.postSendEther);
 
 router.post('/sendToken', mw.web3, ethController.postSendToken);
 
-router.get('/generateMnemonic', ethController.getGenerateMnemonic);
+router.post('/generateMnemonic', ethController.postGenerateMnemonic);
 
 router.get('/validateMnemonic', ethController.getValidateMnemonic);
 
@@ -28,5 +28,21 @@ router.get(
   '/currentGasPriceFromEthGasStation',
   ethController.getCurrentGasPriceFromEthGasStation,
 );
+
+router.get(
+  '/transactionListFromAddress',
+  mw.etherscan,
+  ethController.getTransactionListFromAddress,
+);
+
+router.get(
+  '/tokenTransactionListFromAddress',
+  mw.etherscan,
+  ethController.getTokenTransactionListFromAddress,
+);
+
+router.get('/transactionInfo', mw.web3, ethController.getTransactionInfo);
+
+router.get('/blockInfo', mw.web3, ethController.getBlockInfo);
 
 module.exports = router;

@@ -67,7 +67,7 @@ router.delete(
   mw.xlmNetwork,
   mw.xlmAsset,
   xlmController.deleteTrustAsset,
-)
+);
 
 // 마지막 블럭 높이 조회
 router.get('/lastBlockNo', mw.xlmNetwork, xlmController.getLastBlock);
