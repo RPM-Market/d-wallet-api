@@ -100,8 +100,10 @@ const checkMnemonic = async (req, res, next) => {
 
 const etherscan = async (req, res, next) => {
   try {
+    const endpoint = req.body.endpoint || req.query.endpoint;
     req.etherscan = require('etherscan-api').init(
       process.env.ETHERSCAN_API_KEY,
+      endpoint,
     );
     next();
   } catch (e) {
