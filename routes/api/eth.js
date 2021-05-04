@@ -22,27 +22,27 @@ router.post('/generateMnemonic', ethController.postGenerateMnemonic);
 
 router.get('/validateMnemonic', ethController.getValidateMnemonic);
 
-router.get('/currentGasPrice', mw.web3, ethController.getCurrentGasPrice);
+router.get('/gasPrice', mw.web3, ethController.getGasPrice);
 
 router.get(
-  '/currentGasPriceFromEthGasStation',
-  ethController.getCurrentGasPriceFromEthGasStation,
+  '/gasPriceFromNet',
+  ethController.getGasPriceFromNet,
 );
 
 router.get(
-  '/transactionListFromAddress',
+  '/txWithAddress',
   mw.etherscan,
-  ethController.getTransactionListFromAddress,
+  ethController.getTxWithAddress,
 );
 
 router.get(
-  '/tokenTransactionListFromAddress',
+  '/tokenTxWithAddress',
   mw.etherscan,
-  ethController.getTokenTransactionListFromAddress,
+  ethController.getTokenTxWithAddress,
 );
 
-router.get('/transactionInfo', mw.web3, ethController.getTransactionInfo);
+router.get('/tx', mw.web3, ethController.getTx);
 
-router.get('/blockInfo', mw.web3, ethController.getBlockInfo);
+router.get('/block', mw.web3, ethController.getBlock);
 
 module.exports = router;

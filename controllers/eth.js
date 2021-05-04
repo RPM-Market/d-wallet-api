@@ -173,7 +173,7 @@ const getValidateMnemonic = async (req, res) => {
   }
 };
 
-const getCurrentGasPrice = async (req, res) => {
+const getGasPrice = async (req, res) => {
   try {
     let lastGasPrice = {};
     let blockNumber = await req.web3.eth.getBlockNumber();
@@ -235,11 +235,11 @@ const getCurrentGasPrice = async (req, res) => {
     lastGasPrice.transantionCount = txLength;
     return cwr.createWebResp(res, 200, lastGasPrice);
   } catch (e) {
-    return cwr.errorWebResp(res, 500, 'E0000 - getCurrentGasPrice', e.message);
+    return cwr.errorWebResp(res, 500, 'E0000 - getGasPrice', e.message);
   }
 };
 
-const getCurrentGasPriceFromEthGasStation = async (req, res) => {
+const getGasPriceFromNet = async (req, res) => {
   try {
     const response = await axios.get(
       'https://ethgasstation.info/json/ethgasAPI.json',
@@ -255,13 +255,13 @@ const getCurrentGasPriceFromEthGasStation = async (req, res) => {
     return cwr.errorWebResp(
       res,
       500,
-      'E0000 - getCurrentGasPriceFromEthGasStation',
+      'E0000 - getGasPriceFromNet',
       e.message,
     );
   }
 };
 
-const getTransactionListFromAddress = async (req, res) => {
+const getTxWithAddress = async (req, res) => {
   try {
     const {
       address,
@@ -294,13 +294,13 @@ const getTransactionListFromAddress = async (req, res) => {
     return cwr.errorWebResp(
       res,
       500,
-      'E0000 - getTransactionListFromAddress',
+      'E0000 - getTxWithAddress',
       e.message,
     );
   }
 };
 
-const getTokenTransactionListFromAddress = async (req, res) => {
+const getTokenTxWithAddress = async (req, res) => {
   try {
     const {walletAddress, tokenAddress, startBlock, endBlock, sort} = req.query;
     const tokenTxList = await req.etherscan.account.tokentx(
@@ -315,29 +315,29 @@ const getTokenTransactionListFromAddress = async (req, res) => {
     return cwr.errorWebResp(
       res,
       500,
-      'E0000 - getTokenTransactionListFromAddress',
+      'E0000 - getTokenTxWithAddress',
       e.message,
     );
   }
 };
 
-const getTransactionInfo = async (req, res) => {
+const getTx = async (req, res) => {
   try {
     const {txHash} = req.query;
     const txInfo = await req.web3.eth.getTransaction(txHash);
     return cwr.createWebResp(res, 200, txInfo);
   } catch (e) {
-    return cwr.errorWebResp(res, 500, 'E0000 - getTransactionInfo', e.message);
+    return cwr.errorWebResp(res, 500, 'E0000 - getTx', e.message);
   }
 };
 
-const getBlockInfo = async (req, res) => {
+const getBlock = async (req, res) => {
   try {
     const {blockHash} = req.query;
     const blockInfo = await req.web3.eth.getBlock(blockHash);
     return cwr.createWebResp(res, 200, blockInfo);
   } catch (e) {
-    return cwr.errorWebResp(res, 500, 'E0000 - getBlockInfo', e.message);
+    return cwr.errorWebResp(res, 500, 'E0000 - getBlock', e.message);
   }
 };
 
@@ -349,10 +349,10 @@ module.exports = {
   postSendToken,
   postGenerateMnemonic,
   getValidateMnemonic,
-  getCurrentGasPrice,
-  getCurrentGasPriceFromEthGasStation,
-  getTransactionListFromAddress,
-  getTokenTransactionListFromAddress,
-  getTransactionInfo,
-  getBlockInfo,
+  getGasPrice,
+  getGasPriceFromNet,
+  getTxWithAddress,
+  getTokenTxWithAddress,
+  getTx,
+  getBlock,
 };
