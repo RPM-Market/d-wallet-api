@@ -51,16 +51,6 @@ const getEtherBalance = async (req, res) => {
   }
 };
 
-const getEtherHistory = async (req, res) => {
-  try {
-    const {walletAddress} = req.query;
-    let balance = await req.web3.eth.get;
-    return cwr.createWebResp(res, 200, balance);
-  } catch (e) {
-    return cwr.errorWebResp(res, 500, 'E0000 - getEtherBalance', e.message);
-  }
-};
-
 const postSendEther = async (req, res) => {
   try {
     const {
@@ -341,6 +331,18 @@ const getBlock = async (req, res) => {
   }
 };
 
+const postAddressFromPkey = async (req, res) => {
+  try {
+    const {
+      WalletPrivateKey,
+    } = req.body;
+    const ethersAccount = new ethers.Wallet(WalletPrivateKey);
+    return cwr.createWebResp(res, 200, ethersAccount.address);
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, 'E0000 - postAddressFromPkey', e.message);
+  }
+};
+
 module.exports = {
   postDecodeMnemonic,
   getEtherBalance,
@@ -355,4 +357,5 @@ module.exports = {
   getTokenTxWithAddress,
   getTx,
   getBlock,
+  postAddressFromPkey,
 };

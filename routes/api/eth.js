@@ -45,4 +45,6 @@ router.get('/tx', mw.web3, ethController.getTx);
 
 router.get('/block', mw.web3, ethController.getBlock);
 
+router.post('/addressFromPkey', ethController.postAddressFromPkey);
+
 module.exports = router;
