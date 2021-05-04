@@ -22,6 +22,7 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const assetsRouter = require('./routes/api/assets');
+const btcRouter = require('./routes/api/btc');
 const xlmRouter = require('./routes/api/xlm');
 const ethRouter = require('./routes/api/eth');
 
@@ -45,6 +46,7 @@ const version = '/v1';
 
 app.use('/', indexRouter);
 app.use(`${version}/assets`, assetsRouter);
+app.use(`${version}/btc`, btcRouter);
 app.use(`${version}/xlm`, xlmRouter);
 app.use(`${version}/eth`, ethRouter);
 

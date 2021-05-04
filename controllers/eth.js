@@ -331,15 +331,15 @@ const getBlock = async (req, res) => {
   }
 };
 
-const postAddressFromPkey = async (req, res) => {
+const postAddressFromPrivate = async (req, res) => {
   try {
     const {
-      WalletPrivateKey,
+      walletPrivateKey,
     } = req.body;
-    const ethersAccount = new ethers.Wallet(WalletPrivateKey);
-    return cwr.createWebResp(res, 200, ethersAccount.address);
+    const ethersAccount = new ethers.Wallet(walletPrivateKey);
+    return cwr.createWebResp(res, 200, {address: ethersAccount.address});
   } catch (e) {
-    return cwr.errorWebResp(res, 500, 'E0000 - postAddressFromPkey', e.message);
+    return cwr.errorWebResp(res, 500, 'E0000 - postAddressFromPrivate', e.message);
   }
 };
 
@@ -357,5 +357,5 @@ module.exports = {
   getTokenTxWithAddress,
   getTx,
   getBlock,
-  postAddressFromPkey,
+  postAddressFromPrivate,
 };
