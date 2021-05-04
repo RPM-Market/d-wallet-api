@@ -34,7 +34,7 @@ const getTokenBalance = async (req, res) => {
     const decimal = Math.pow(10, await contract.methods.decimals().call());
     const balance =
       (await contract.methods.balanceOf(walletAddress).call()) / decimal;
-    return cwr.createWebResp(res, 200, balance);
+    return cwr.createWebResp(res, 200, {balance});
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - getTokenBalance', e.message);
   }
@@ -45,7 +45,7 @@ const getEtherBalance = async (req, res) => {
     const {walletAddress} = req.query;
     let balance = await req.web3.eth.getBalance(walletAddress);
     balance = req.web3.utils.fromWei(balance, 'ether');
-    return cwr.createWebResp(res, 200, balance);
+    return cwr.createWebResp(res, 200, {balance});
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - getEtherBalance', e.message);
   }
@@ -242,12 +242,7 @@ const getGasPriceFromNet = async (req, res) => {
     };
     return cwr.createWebResp(res, 200, prices);
   } catch (e) {
-    return cwr.errorWebResp(
-      res,
-      500,
-      'E0000 - getGasPriceFromNet',
-      e.message,
-    );
+    return cwr.errorWebResp(res, 500, 'E0000 - getGasPriceFromNet', e.message);
   }
 };
 
@@ -281,12 +276,7 @@ const getTxWithAddress = async (req, res) => {
     }
     return cwr.createWebResp(res, 200, txlist.result);
   } catch (e) {
-    return cwr.errorWebResp(
-      res,
-      500,
-      'E0000 - getTxWithAddress',
-      e.message,
-    );
+    return cwr.errorWebResp(res, 500, 'E0000 - getTxWithAddress', e.message);
   }
 };
 
@@ -333,13 +323,16 @@ const getBlock = async (req, res) => {
 
 const postAddressFromPrivate = async (req, res) => {
   try {
-    const {
-      walletPrivateKey,
-    } = req.body;
+    const {walletPrivateKey} = req.body;
     const ethersAccount = new ethers.Wallet(walletPrivateKey);
     return cwr.createWebResp(res, 200, {address: ethersAccount.address});
   } catch (e) {
-    return cwr.errorWebResp(res, 500, 'E0000 - postAddressFromPrivate', e.message);
+    return cwr.errorWebResp(
+      res,
+      500,
+      'E0000 - postAddressFromPrivate',
+      e.message,
+    );
   }
 };
 

@@ -24,16 +24,9 @@ router.get('/validateMnemonic', ethController.getValidateMnemonic);
 
 router.get('/gasPrice', mw.web3, ethController.getGasPrice);
 
-router.get(
-  '/gasPriceFromNet',
-  ethController.getGasPriceFromNet,
-);
+router.get('/gasPriceFromNet', ethController.getGasPriceFromNet);
 
-router.get(
-  '/txWithAddress',
-  mw.etherscan,
-  ethController.getTxWithAddress,
-);
+router.get('/txWithAddress', mw.etherscan, ethController.getTxWithAddress);
 
 router.get(
   '/tokenTxWithAddress',
