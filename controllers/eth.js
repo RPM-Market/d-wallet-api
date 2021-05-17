@@ -283,13 +283,8 @@ const getTxWithAddress = async (req, res) => {
 const getTokenTxWithAddress = async (req, res) => {
   try {
     const {walletAddress, tokenAddress, startBlock, endBlock, sort} = req.query;
-    const tokenTxList = await req.etherscan.account.tokentx(
-      walletAddress,
-      tokenAddress,
-      startBlock,
-      endBlock,
-      sort,
-    );
+    console.log(req.query);
+    const tokenTxList = await req.etherscan.account.tokentx(walletAddress, tokenAddress, startBlock, endBlock, null, null, sort);
     return cwr.createWebResp(res, 200, tokenTxList.result);
   } catch (e) {
     return cwr.errorWebResp(
