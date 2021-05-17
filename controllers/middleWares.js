@@ -4,6 +4,7 @@ const cwr = require('../utils/createWebResp');
 const stellarConfig = require('../config/XLM/stellar');
 const eth = require('../config/ETH/eth');
 const Web3 = require('web3');
+const Client = require('bitcoin-core');
 
 ////////////////////// Middleware for XLM //////////////////////
 const isValidMnemonic = async (req, res, next) => {
@@ -111,6 +112,46 @@ const etherscan = async (req, res, next) => {
   }
 };
 
+////////////////////// Middleware for BTC //////////////////////
+const btcNetwork = async (req, res, next) => {
+  try {
+    const network = req.body.network || req.query.network;
+    let client;
+    if (network === 'mainnet') {
+      client = new Client({
+        network,
+        host: process.env.BTC_HOST,
+        username: process.env.BTC_USERNAME,
+        password: process.env.BTC_USER_PASSWORD,
+        port: process.env.BTC_MAINNET_PORT,
+      });
+    } else if (network === 'testnet') {
+      client = new Client({
+        network,
+        host: process.env.BTC_HOST,
+        username: process.env.BTC_USERNAME,
+        password: process.env.BTC_USER_PASSWORD,
+        port: process.env.BTC_TESTNET_PORT,
+      });
+    } else if (network === 'regtest') {
+      client = new Client({
+        network,
+        host: process.env.BTC_HOST,
+        username: process.env.BTC_USERNAME,
+        password: process.env.BTC_USER_PASSWORD,
+        port: process.env.BTC_REGTEST_PORT,
+      });
+    } else {
+      return cwr.errorWebResp(res, 500, `E0000 - Check Network`);
+    }
+    req.client = client;
+    req.network = network;
+    next();
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, `E0000 - btcNetwork`, e.message);
+  }
+};
+
 module.exports = {
   isValidMnemonic,
   xlmNetwork,
@@ -118,4 +159,5 @@ module.exports = {
   web3,
   checkMnemonic,
   etherscan,
+  btcNetwork,
 };
