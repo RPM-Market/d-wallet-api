@@ -19,20 +19,24 @@ const postDecodeMnemonic = async (req, res) => {
     const {mnemonic, index, network} = req.body;
     const seed = bip39.mnemonicToSeedSync(mnemonic);
     let bitcoinNetwork;
+    let path;
     if (network === 'bitcoin') {
       bitcoinNetwork = bitcoin.networks.bitcoin;
-    } else if (network === 'testnet') {
-      bitcoinNetwork = bitcoin.networks.testnet;
-    } else if (network === 'regtest') {
-      bitcoinNetwork = bitcoin.networks.regtest;
+      path = `m/44'/0'/0'/0/${index}`;
+    } else {
+      path = `m/44'/1'/0'/0/${index}`;
+      if (network === 'testnet') {
+        bitcoinNetwork = bitcoin.networks.testnet;
+      } else if (network === 'regtest') {
+        bitcoinNetwork = bitcoin.networks.regtest;
+      }
     }
     const hdMaster = bitcoin.bip32.fromSeed(seed, bitcoinNetwork); // bitcoin, testnet, regtest
-    const path = `m/44'/0'/0'/0/${index}`;
     const keyPair = hdMaster.derivePath(path); // ("m/44'/0'/0'")
     // const p2pkh = bitcoin.payments.p2pkh({pubkey: keyPair.publicKey, network: bitcoin.networks.bitcoin})
     const address = bitcoin.payments.p2pkh({
       pubkey: keyPair.publicKey,
-      network: bitcoin.networks.bitcoin,
+      network: bitcoinNetwork,
     }).address;
     const privateKey = keyPair.toWIF();
     // const privateKey = keyPair.privateKey.toString('hex').toString('base64');
