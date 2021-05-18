@@ -74,9 +74,8 @@ const postSendEther = async (req, res) => {
       gasLimit: req.web3.utils.toHex(gasLimit?.toString()),
     };
 
-    const account = req.web3.eth.accounts.privateKeyToAccount(
-      myWalletPrivateKey,
-    );
+    const account =
+      req.web3.eth.accounts.privateKeyToAccount(myWalletPrivateKey);
     const signedTx = await account.signTransaction(rawTx);
     const txInfo = await req.web3.eth.sendSignedTransaction(
       signedTx.rawTransaction,
@@ -118,9 +117,8 @@ const postSendToken = async (req, res) => {
       data: contractRawTx,
       value: '0x0',
     };
-    const account = req.web3.eth.accounts.privateKeyToAccount(
-      myWalletPrivateKey,
-    );
+    const account =
+      req.web3.eth.accounts.privateKeyToAccount(myWalletPrivateKey);
     const signedTx = await account.signTransaction(rawTx);
     const txInfo = await req.web3.eth.sendSignedTransaction(
       signedTx.rawTransaction,
@@ -248,15 +246,8 @@ const getGasPriceFromNet = async (req, res) => {
 
 const getTxWithAddress = async (req, res) => {
   try {
-    const {
-      address,
-      startBlock,
-      endBlock,
-      page,
-      offset,
-      sort,
-      isError,
-    } = req.query;
+    const {address, startBlock, endBlock, page, offset, sort, isError} =
+      req.query;
     const txlist = await req.etherscan.account.txlist(
       address,
       startBlock,
@@ -284,7 +275,15 @@ const getTokenTxWithAddress = async (req, res) => {
   try {
     const {walletAddress, tokenAddress, startBlock, endBlock, sort} = req.query;
     console.log(req.query);
-    const tokenTxList = await req.etherscan.account.tokentx(walletAddress, tokenAddress, startBlock, endBlock, null, null, sort);
+    const tokenTxList = await req.etherscan.account.tokentx(
+      walletAddress,
+      tokenAddress,
+      startBlock,
+      endBlock,
+      null,
+      null,
+      sort,
+    );
     return cwr.createWebResp(res, 200, tokenTxList.result);
   } catch (e) {
     return cwr.errorWebResp(

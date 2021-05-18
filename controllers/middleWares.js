@@ -99,6 +99,14 @@ const checkMnemonic = async (req, res, next) => {
   }
 };
 
+const checkBTCNetwork = async (req, res, next) => {
+  try {
+    next();
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, `E0000 - checkBTCNetwork`, e.message);
+  }
+};
+
 const etherscan = async (req, res, next) => {
   try {
     const endpoint = req.body.endpoint || req.query.endpoint;
@@ -117,7 +125,8 @@ const btcNetwork = async (req, res, next) => {
   try {
     const network = req.body.network || req.query.network;
     let client;
-    if (network === 'mainnet') {
+    // network param must be 'bitcoin' or 'mainnet'
+    if (network === 'bitcoin' || network === 'mainnet') {
       client = new Client({
         network,
         host: process.env.BTC_HOST,
@@ -158,6 +167,7 @@ module.exports = {
   xlmAsset,
   web3,
   checkMnemonic,
+  checkBTCNetwork,
   etherscan,
   btcNetwork,
 };

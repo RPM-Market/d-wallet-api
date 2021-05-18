@@ -4,11 +4,10 @@ const router = express.Router();
 const btcController = require('../../controllers/btc');
 const mw = require('../../controllers/middleWares');
 
-router.post('/test', btcController.postTest);
-
 router.post(
   '/decodeMnemonic',
   mw.checkMnemonic,
+  mw.checkBTCNetwork,
   btcController.postDecodeMnemonic,
 );
 
@@ -22,8 +21,18 @@ router.get('/networkInfo', mw.btcNetwork, btcController.getNetworkInfo);
 
 router.post('/createWallet', mw.btcNetwork, btcController.postCreateWallet);
 
-router.get('/balance', mw.btcNetwork, btcController.getBalance);
+// Via RPC.
+// router.get('/balance', mw.btcNetwork, btcController.getBalance);
+
+// With blockchain.info API
+router.get('/balance', btcController.getBalance);
 
 router.post('/loadWallet', mw.btcNetwork, btcController.postLoadWallet);
+
+router.post('/unloadWallet', mw.btcNetwork, btcController.postUnloadWallet);
+
+router.get('/walletInfo', mw.btcNetwork, btcController.getWalletInfo);
+
+router.post('/dumpPrivKey', mw.btcNetwork, btcController.postDumpPrivKey);
 
 module.exports = router;
