@@ -103,8 +103,9 @@ const postSendToken = async (req, res) => {
       contractAddress,
     );
     const decimal = Math.pow(10, await contract.methods.decimals().call());
+    let totalAmount = (decimal*amountToken).toLocaleString('fullwide', {useGrouping:false});
     let contractRawTx = await contract.methods
-      .transfer(toWalletAddress, req.web3.utils.toHex(amountToken * decimal))
+      .transfer(toWalletAddress, req.web3.utils.toHex(totalAmount))
       .encodeABI();
 
     const rawTx = {
