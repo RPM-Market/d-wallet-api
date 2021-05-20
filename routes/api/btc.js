@@ -27,6 +27,8 @@ router.post('/createWallet', mw.btcNetwork, btcController.postCreateWallet);
 // With blockchain.info API
 router.get('/balance', btcController.getBalance);
 
+router.get('/addressInfo', mw.btcNetwork, btcController.getAddressInfo);
+
 router.post('/loadWallet', mw.btcNetwork, btcController.postLoadWallet);
 
 router.post('/unloadWallet', mw.btcNetwork, btcController.postUnloadWallet);

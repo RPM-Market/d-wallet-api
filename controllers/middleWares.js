@@ -151,7 +151,7 @@ const btcNetwork = async (req, res, next) => {
         port: process.env.BTC_REGTEST_PORT,
       });
     } else {
-      return cwr.errorWebResp(res, 500, `E0000 - Check Network`);
+      return cwr.errorWebResp(res, 500, `E0000 - Check Network, network should be 'bitcoin / mainnet / testnet / regtest`);
     }
     req.client = client;
     req.network = network;

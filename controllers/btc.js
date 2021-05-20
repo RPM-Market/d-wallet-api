@@ -127,17 +127,29 @@ const getBalance = async (req, res) => {
     const response = await axios.get(
       `https://blockchain.info/rawaddr/${address}`,
     );
-    return cwr.createWebResp(res, 200, {...response});
+    const data = response.data;
+    return cwr.createWebResp(res, 200, {...data});
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - getBalance', e.message);
   }
 };
 
+const getAddressInfo = async (req, res) => {
+  try {
+    const client = req.client;
+    const {address} = req.query;
+    const response = await client.getAddressInfo(address);
+    return cwr.createWebResp(res, 200, {...response});
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, 'E0000 - getAddressInfo', e.message);
+  }
+}
+
 const postLoadWallet = async (req, res) => {
   try {
     const client = req.client;
     const {walletName} = req.body;
-    const response = await client.loadWallet(`${walletName}`);
+    const response = await client.loadWallet(walletName);
     return cwr.createWebResp(res, 200, {...response});
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - postLoadWallet', e.message);
@@ -148,7 +160,7 @@ const postUnloadWallet = async (req, res) => {
   try {
     const client = req.client;
     const {walletName} = req.body;
-    const response = await client.unloadWallet(`${walletName}`);
+    const response = await client.unloadWallet(walletName);
     return cwr.createWebResp(res, 200, {...response});
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - postUnloadWallet', e.message);
@@ -167,6 +179,10 @@ const getWalletInfo = async (req, res) => {
 
 const postDumpPrivKey = async (req, res) => {
   try {
+    const {client} = req;
+    const {walletName} = req.body;
+    const result = await client.dumpPrivKey(walletName);
+    return cwr.createWebResp(res, 200, {...result});
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - postDumpPrivKey', e.message);
   }
@@ -180,6 +196,7 @@ module.exports = {
   getNetworkInfo,
   postCreateWallet,
   getBalance,
+  getAddressInfo,
   postLoadWallet,
   postUnloadWallet,
   getWalletInfo,
