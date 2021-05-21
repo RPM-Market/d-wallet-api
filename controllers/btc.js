@@ -81,6 +81,33 @@ const getBlockchainInfo = async (req, res) => {
   }
 };
 
+const getBlockHash = async (req, res) => {
+  try {
+    const {number} = req.query;
+    const {client, lastBlockHash, lastBlockNumber} = req;
+    const blockHash = await client.getBlockHash(parseInt(number));
+    return cwr.createWebResp(res, 200, {
+      blockNumber: parseInt(number),
+      blockHash,
+      lastBlockNumber,
+      lastBlockHash,
+    });
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, 'E0000 - getBlockHash', e.message);
+  }
+};
+
+// const getRawTransaction = async (req, res) => {
+//   try {
+//     const client = req.client;
+//     const {tx} = req.query;
+//     const response = await client.getRawTransaction(tx);
+//     return cwr.createWebResp(res, 200, response);
+//   } catch (e) {
+//     return cwr.errorWebResp(res, 500, 'E0000 - getRawTransaction', e.message);
+//   }
+// }
+
 const getNetworkInfo = async (req, res) => {
   try {
     const client = req.client;
@@ -143,7 +170,7 @@ const getAddressInfo = async (req, res) => {
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - getAddressInfo', e.message);
   }
-}
+};
 
 const postLoadWallet = async (req, res) => {
   try {
@@ -193,6 +220,8 @@ module.exports = {
   postDecodeWIF,
   postWifToPublic,
   getBlockchainInfo,
+  getBlockHash,
+  getRawTransaction,
   getNetworkInfo,
   postCreateWallet,
   getBalance,

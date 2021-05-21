@@ -151,13 +151,31 @@ const btcNetwork = async (req, res, next) => {
         port: process.env.BTC_REGTEST_PORT,
       });
     } else {
-      return cwr.errorWebResp(res, 500, `E0000 - Check Network, network should be 'bitcoin / mainnet / testnet / regtest`);
+      return cwr.errorWebResp(
+        res,
+        500,
+        `E0000 - Check Network, network should be 'bitcoin / mainnet / testnet / regtest`,
+      );
     }
     req.client = client;
     req.network = network;
     next();
   } catch (e) {
     return cwr.errorWebResp(res, 500, `E0000 - btcNetwork`, e.message);
+  }
+};
+
+const btcLastBlockHash = async (req, res, next) => {
+  try {
+    const client = req.client;
+    const response = await client.getBlockchainInfo();
+    const lastBlockHash = response.bestblockhash;
+    const lastBlockNumber = response.blocks;
+    req.lastBlockHash = lastBlockHash;
+    req.lastBlockNumber = lastBlockNumber;
+    next();
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, `E0000 - btcLastBlockHash`, e.message);
   }
 };
 
@@ -170,4 +188,5 @@ module.exports = {
   checkBTCNetwork,
   etherscan,
   btcNetwork,
+  btcLastBlockHash,
 };
