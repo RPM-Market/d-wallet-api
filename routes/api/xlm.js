@@ -61,12 +61,13 @@ router.post(
   xlmController.postTrustAsset,
 );
 
-// 자산제거
-router.delete(
-  '/trustAsset',
+// limit 변경, 자산제거 (limit=0)
+// limit 을 0 으로 변경하면 자산이 제거됨, 이때 자산이 0 이어야 함
+router.post(
+  '/changeTrustAsset',
   mw.xlmNetwork,
   mw.xlmAsset,
-  xlmController.deleteTrustAsset,
+  xlmController.postChangeTrustAsset,
 );
 
 // 마지막 블럭 높이 조회

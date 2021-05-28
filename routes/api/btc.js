@@ -24,12 +24,6 @@ router.get(
   btcController.getBlockHash,
 );
 
-// router.get(
-//   '/rawTransaction',
-//   mw.btcNetwork,
-//   btcController.getRawTransaction,
-// );
-
 router.get('/networkInfo', mw.btcNetwork, btcController.getNetworkInfo);
 
 router.post('/createWallet', mw.btcNetwork, btcController.postCreateWallet);

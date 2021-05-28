@@ -97,17 +97,6 @@ const getBlockHash = async (req, res) => {
   }
 };
 
-// const getRawTransaction = async (req, res) => {
-//   try {
-//     const client = req.client;
-//     const {tx} = req.query;
-//     const response = await client.getRawTransaction(tx);
-//     return cwr.createWebResp(res, 200, response);
-//   } catch (e) {
-//     return cwr.errorWebResp(res, 500, 'E0000 - getRawTransaction', e.message);
-//   }
-// }
-
 const getNetworkInfo = async (req, res) => {
   try {
     const client = req.client;
@@ -221,7 +210,6 @@ module.exports = {
   postWifToPublic,
   getBlockchainInfo,
   getBlockHash,
-  getRawTransaction,
   getNetworkInfo,
   postCreateWallet,
   getBalance,
