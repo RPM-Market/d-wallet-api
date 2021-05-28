@@ -32,9 +32,10 @@ const getTokenBalance = async (req, res) => {
       contractAddress,
     );
     const decimal = Math.pow(10, await contract.methods.decimals().call());
-    const balance =
-      (await contract.methods.balanceOf(walletAddress).call()) / decimal;
-    return cwr.createWebResp(res, 200, {balance});
+    const balance = (await contract.methods.balanceOf(walletAddress).call()) / decimal;
+    const tokenName = await contract.methods.name().call();
+    const tokenSymbol = await contract.methods.symbol().call();
+    return cwr.createWebResp(res, 200, {balance, tokenName, tokenSymbol});
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - getTokenBalance', e.message);
   }
@@ -116,8 +117,9 @@ const postSendToken = async (req, res) => {
       gasLimit: req.web3.utils.toHex(gasLimit?.toString()),
       to: contractAddress,
       from: myWalletAddress,
-      data: contractRawTx,
       value: '0x0',
+
+      data: contractRawTx,
     };
     const account = req.web3.eth.accounts.privateKeyToAccount(
       myWalletPrivateKey,
@@ -181,8 +183,7 @@ const getGasPrice = async (req, res) => {
     let block = await getBlock();
     let txs = [];
     let txsGas = [];
-    const chunkSize =
-      block.transactions.length / Math.sqrt(block.transactions.length);
+    const chunkSize = block.transactions.length / Math.sqrt(block.transactions.length);
     for (let txid = 0; txid < block.transactions.length; txid++) {
       txs.push(req.web3.eth.getTransaction(block.transactions[txid]));
     }
@@ -209,6 +210,7 @@ const getGasPrice = async (req, res) => {
       });
     }
     let sumGas = txsGas.reduce((a, b) => parseInt(a) + parseInt(b), 0);
+    lastGasPrice.network = req.endpoint;
     lastGasPrice.blockNumber = block.number;
     lastGasPrice.avg = req.web3.utils.fromWei(
       parseInt(sumGas / txLength).toString(),
@@ -225,6 +227,14 @@ const getGasPrice = async (req, res) => {
     lastGasPrice.total = req.web3.utils.fromWei(sumGas.toString(), 'gwei');
     lastGasPrice.transantionCount = txLength;
     return cwr.createWebResp(res, 200, lastGasPrice);
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, 'E0000 - getGasPrice', e.message);
+  }
+};
+
+const getGasPriceFromWeb3 = async (req, res) => {
+  try {
+    return cwr.createWebResp(res, 200, await req.web3.eth.getGasPrice());
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - getGasPrice', e.message);
   }
@@ -284,16 +294,10 @@ const getTxWithAddress = async (req, res) => {
 const getTokenTxWithAddress = async (req, res) => {
   try {
     const {walletAddress, tokenAddress, startBlock, endBlock, sort} = req.query;
-    console.log(req.query);
     const tokenTxList = await req.etherscan.account.tokentx(walletAddress, tokenAddress, startBlock, endBlock, null, null, sort);
     return cwr.createWebResp(res, 200, tokenTxList.result);
   } catch (e) {
-    return cwr.errorWebResp(
-      res,
-      500,
-      'E0000 - getTokenTxWithAddress',
-      e.message,
-    );
+    return cwr.errorWebResp(res, 500, 'E0000 - getTokenTxWithAddress', e.message);
   }
 };
 

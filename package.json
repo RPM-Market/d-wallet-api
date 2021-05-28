@@ -7,6 +7,7 @@
     "test": "node_modules/.bin/mocha"
   },
   "dependencies": {
+    "@aave/protocol-js": "^2.7.2",
     "axios": "^0.21.1",
     "bip39": "^3.0.4",
     "bitcoin-core": "^3.0.0",
@@ -21,6 +22,7 @@
     "express": "~4.17.1",
     "http-errors": "~1.8.0",
     "morgan": "~1.10.0",
+    "node-fetch": "^2.6.1",
     "pug": "3.0.2",
     "stellar-hd-wallet": "0.0.10",
     "stellar-sdk": "^8.1.1",

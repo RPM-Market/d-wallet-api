@@ -4,7 +4,7 @@ const switchBaseUrl = (network) => {
       throw 'switchBaseUrl : endpoint error (' + network + ')';
     case 'ropsten':
     case 'mainnet':
-    case 'kivan':
+    case 'kovan':
     case 'rinkeby':
     case 'goerli':
       return 'https://' + network + '.infura.io/v3/';
