@@ -8,11 +8,12 @@ const postIssue = async (req, res) => {
   try {
     const {server} = req;
     const {
-      assetCode, // 자금 이름 형식
+      assetCode, // 자산 이름 형식, ex) BTC, ETH, CUSTOMTOKEN
       assetIssuerSecret, // 발급자 비밀 키
       receiverSecret, // 자금 수여받을 계정
-      changeTrust, // 처음 한번만 필요
+      changeTrust, // 처음 한번만 필요, false 일 경우 단순한 자산만 추가
       amount, // 발행량, 최대 최대 922337203685
+      limit, // 자산의 최대 수량 (Optional), 미 기입 시 초기 수령하는 amount 와 같은 양으로 제한
     } = req.body;
 
     // Keys for accounts to issue and receive the new asset
@@ -36,7 +37,7 @@ const postIssue = async (req, res) => {
         .addOperation(
           StellarSdk.Operation.changeTrust({
             asset,
-            limit: amount,
+            limit: limit || amount,
           }),
         )
         // setTimeout is required for a transaction

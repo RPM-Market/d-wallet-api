@@ -75,9 +75,8 @@ const postSendEther = async (req, res) => {
       gasLimit: req.web3.utils.toHex(gasLimit?.toString()),
     };
 
-    const account = req.web3.eth.accounts.privateKeyToAccount(
-      myWalletPrivateKey,
-    );
+    const account =
+      req.web3.eth.accounts.privateKeyToAccount(myWalletPrivateKey);
     const signedTx = await account.signTransaction(rawTx);
     const txInfo = await req.web3.eth.sendSignedTransaction(
       signedTx.rawTransaction,
@@ -105,7 +104,9 @@ const postSendToken = async (req, res) => {
       contractAddress,
     );
     const decimal = Math.pow(10, await contract.methods.decimals().call());
-    let totalAmount = (decimal*amountToken).toLocaleString('fullwide', {useGrouping:false});
+    let totalAmount = (decimal * amountToken).toLocaleString('fullwide', {
+      useGrouping: false,
+    });
     let contractRawTx = await contract.methods
       .transfer(toWalletAddress, req.web3.utils.toHex(totalAmount))
       .encodeABI();
@@ -121,9 +122,8 @@ const postSendToken = async (req, res) => {
 
       data: contractRawTx,
     };
-    const account = req.web3.eth.accounts.privateKeyToAccount(
-      myWalletPrivateKey,
-    );
+    const account =
+      req.web3.eth.accounts.privateKeyToAccount(myWalletPrivateKey);
     const signedTx = await account.signTransaction(rawTx);
     const txInfo = await req.web3.eth.sendSignedTransaction(
       signedTx.rawTransaction,
@@ -259,15 +259,8 @@ const getGasPriceFromNet = async (req, res) => {
 
 const getTxWithAddress = async (req, res) => {
   try {
-    const {
-      address,
-      startBlock,
-      endBlock,
-      page,
-      offset,
-      sort,
-      isError,
-    } = req.query;
+    const {address, startBlock, endBlock, page, offset, sort, isError} =
+      req.query;
     const txlist = await req.etherscan.account.txlist(
       address,
       startBlock,
@@ -294,7 +287,20 @@ const getTxWithAddress = async (req, res) => {
 const getTokenTxWithAddress = async (req, res) => {
   try {
     const {walletAddress, tokenAddress, startBlock, endBlock, sort} = req.query;
+<<<<<<< HEAD
     const tokenTxList = await req.etherscan.account.tokentx(walletAddress, tokenAddress, startBlock, endBlock, null, null, sort);
+=======
+    console.log(req.query);
+    const tokenTxList = await req.etherscan.account.tokentx(
+      walletAddress,
+      tokenAddress,
+      startBlock,
+      endBlock,
+      null,
+      null,
+      sort,
+    );
+>>>>>>> 1f9d906b47da6298d76371f4e752e24b156c0195
     return cwr.createWebResp(res, 200, tokenTxList.result);
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - getTokenTxWithAddress', e.message);

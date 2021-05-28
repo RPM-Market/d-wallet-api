@@ -226,9 +226,10 @@ const postTrustAsset = async (req, res) => {
   }
 };
 
-const deleteTrustAsset = async (req, res) => {
+const postChangeTrustAsset = async (req, res) => {
   try {
     const {asset, server} = req;
+    const {limit} = req.body;
     const txOptions = {
       fee: StellarSdk.BASE_FEE,
       networkPassphrase: req.networkPassphrase,
@@ -240,7 +241,7 @@ const deleteTrustAsset = async (req, res) => {
       loadedAccount,
       txOptions,
     )
-      .addOperation(StellarSdk.Operation.changeTrust({asset, limit: '0'}))
+      .addOperation(StellarSdk.Operation.changeTrust({asset, limit}))
       .setTimeout(xlmUtils.TIMEOUT)
       .build();
     transaction.sign(keypair);
@@ -250,7 +251,7 @@ const deleteTrustAsset = async (req, res) => {
     return cwr.errorWebResp(
       res,
       500,
-      `E0000 - deleteTrustAsset`,
+      `E0000 - postChangeTrustAsset`,
       xlmUtils.parseOperationError(e),
     );
   }
@@ -418,7 +419,7 @@ module.exports = {
   postAccount,
   postPayment,
   postTrustAsset,
-  deleteTrustAsset,
+  postChangeTrustAsset,
   getLastBlock,
   getTransactions,
   getTxId,

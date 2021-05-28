@@ -98,6 +98,14 @@ const checkMnemonic = async (req, res, next) => {
   }
 };
 
+const checkBTCNetwork = async (req, res, next) => {
+  try {
+    next();
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, `E0000 - checkBTCNetwork`, e.message);
+  }
+};
+
 const etherscan = async (req, res, next) => {
   try {
     const endpoint = req.body.endpoint?.trim() || req.query.endpoint?.trim();
@@ -116,7 +124,8 @@ const btcNetwork = async (req, res, next) => {
   try {
     const network = req.body.network || req.query.network;
     let client;
-    if (network === 'mainnet') {
+    // network param must be 'bitcoin' or 'mainnet'
+    if (network === 'bitcoin' || network === 'mainnet') {
       client = new Client({
         network,
         host: process.env.BTC_HOST,
@@ -141,7 +150,11 @@ const btcNetwork = async (req, res, next) => {
         port: process.env.BTC_REGTEST_PORT,
       });
     } else {
-      return cwr.errorWebResp(res, 500, `E0000 - Check Network`);
+      return cwr.errorWebResp(
+        res,
+        500,
+        `E0000 - Check Network, network should be 'bitcoin / mainnet / testnet / regtest`,
+      );
     }
     req.client = client;
     req.network = network;
@@ -151,6 +164,7 @@ const btcNetwork = async (req, res, next) => {
   }
 };
 
+<<<<<<< HEAD
 ////////////////////// Middleware for Aave //////////////////////
 const aaveNetwork = async (req, res, next) => {
   try {
@@ -190,6 +204,19 @@ const aaveNetwork = async (req, res, next) => {
     next();
   } catch (e) {
     return cwr.errorWebResp(res, 500, `E0000 - aaveNetwork`, e.message);
+=======
+const btcLastBlockHash = async (req, res, next) => {
+  try {
+    const client = req.client;
+    const response = await client.getBlockchainInfo();
+    const lastBlockHash = response.bestblockhash;
+    const lastBlockNumber = response.blocks;
+    req.lastBlockHash = lastBlockHash;
+    req.lastBlockNumber = lastBlockNumber;
+    next();
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, `E0000 - btcLastBlockHash`, e.message);
+>>>>>>> 1f9d906b47da6298d76371f4e752e24b156c0195
   }
 };
 
@@ -199,7 +226,12 @@ module.exports = {
   xlmAsset,
   web3,
   checkMnemonic,
+  checkBTCNetwork,
   etherscan,
   btcNetwork,
+<<<<<<< HEAD
   aaveNetwork,
+=======
+  btcLastBlockHash,
+>>>>>>> 1f9d906b47da6298d76371f4e752e24b156c0195
 };
