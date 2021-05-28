@@ -3,32 +3,6 @@ const tokenABI = require('../config/ETH/AaveTokenABI');
 const StandardTokenABI = require('../config/ETH/StandardTokenABI');
 const aave = require('../config/AAVE/aave');
 
-
-const test = async (req, res) => {
-  try {
-    const {
-      myWalletAddress,
-      myWalletPrivateKey,
-      amountToken,
-      gasPrice,
-      gasLimit,
-      contractAddress,
-    } = req.body;
-
-    const tokenContract = new req.web3.eth.Contract(
-      tokenABI.AaveABI,
-      contractAddress,
-    );
-    let COOLDOWN_SECONDS = await tokenContract.methods.COOLDOWN_SECONDS().call();
-    let getTotalRewardsBalance = await tokenContract.methods.getTotalRewardsBalance(myWalletAddress).call();
-    let stakersCooldowns = await tokenContract.methods.stakersCooldowns(myWalletAddress).call();
-
-    return cwr.createWebResp(res, 200, {COOLDOWN_SECONDS, getTotalRewardsBalance, stakersCooldowns});
-  } catch (e) {
-    return cwr.errorWebResp(res, 500, `E0000 - test`, e.message);
-  }
-};
-
 const getBalance = async (req, res) => {
   try {
     const {address} = req.query;
@@ -246,37 +220,7 @@ const postCooldown = async (req, res) => {
   }
 };
 
-
-/*
-1. 잔액 조회
--- 전용 잔액 조회 일반 토큰/스테이킹 토큰 조회
-
-2. 스테이킹
-function stake(address onBehalfOf, uint256 amount) // (스테이킹 주소, 수량)
-
-3. 리워드 측정, 받기
-function claimRewards(address to, uint256 amount) // (리워드 받을 주소, 수량)
-
-4. 언스테이킹 - 냉각타이머, 쿨다운 활성창, 환원
-function redeem(address to, uint256 amount) // (환원받을 주소, 수량)
-function cooldown() // 스테이킹 취소
-function stakersCooldowns(address staker) view returns uint // (주소) => 해당 주소의 스테이킹을 동결함.
-function COOLDOWN_SECONDS() view returns uint // 스테이킹을 취소하기 위해 최소 기다려야하는 시간 리턴.
-function UNSTAKE_WINDOW() view returns uint
-function getNextCooldownTimestamp(uint256 fromCooldownTimestamp, uint256 amountToReceive, address toAddress, uint256 toBalance) public returns (uint256)
-
-etc1. 총 보상 확인.
-function getTotalRewardsBalance(address staker) external view returns (uint256)
-
-etc2. 리워드 계산.
-emissionsPerSecond x seconds in a year / current stakes
-https://docs.aave.com/developers/protocol-governance/staking-aave#calculating-apr-for-stkaave
-
- */
-
-
 module.exports = {
-  test,
   getBalance,
   postStake,
   postClaimRewards,

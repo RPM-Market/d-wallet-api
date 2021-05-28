@@ -3,8 +3,6 @@ const router = express.Router();
 const tronController = require('../../controllers/tron');
 const mw = require('../../controllers/middleWares');
 
-router.get('/test', tronController.test);
-
 router.get('/listWitnesses', tronController.getListWitnesses);
 
 router.get('/nextMaintenanceTime', tronController.getNextMaintenanceTime);

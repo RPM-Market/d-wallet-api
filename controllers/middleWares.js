@@ -164,47 +164,6 @@ const btcNetwork = async (req, res, next) => {
   }
 };
 
-<<<<<<< HEAD
-////////////////////// Middleware for Aave //////////////////////
-const aaveNetwork = async (req, res, next) => {
-  try {
-    const {stake} = req.query;
-
-    req.tokenAddress = aave.addressSwitch[req.endpoint][stake];
-/*
-    if (stake === "false")
-    {
-      if (req.endpoint === "mainnet")
-      {
-        req.tokenAddress = "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9";
-      }
-      else if (req.endpoint === "kovan")
-      {
-        req.tokenAddress = "0xb597cd8d3217ea6477232f9217fa70837ff667af";
-      }
-    }
-    else if (stake === "true")
-    {
-      if (req.endpoint === "mainnet")
-      {
-        req.tokenAddress = "0x4da27a545c0c5B758a6BA100e3a049001de870f5";
-      }
-      else if (req.endpoint === "kovan")
-      {
-        req.tokenAddress = "0xf2fbf9a6710afda1c4aab2e922de9d69e0c97fd2";
-      }
-    }
-    else
-    {
-      return cwr.errorWebResp(res, 500, `E0000 - aaveNetwork`, "invaild stake");
-    }
-*/
-
-
-    next();
-  } catch (e) {
-    return cwr.errorWebResp(res, 500, `E0000 - aaveNetwork`, e.message);
-=======
 const btcLastBlockHash = async (req, res, next) => {
   try {
     const client = req.client;
@@ -216,7 +175,19 @@ const btcLastBlockHash = async (req, res, next) => {
     next();
   } catch (e) {
     return cwr.errorWebResp(res, 500, `E0000 - btcLastBlockHash`, e.message);
->>>>>>> 1f9d906b47da6298d76371f4e752e24b156c0195
+  }
+};
+
+////////////////////// Middleware for Aave //////////////////////
+const aaveNetwork = async (req, res, next) => {
+  try {
+    const {stake} = req.query;
+
+    req.tokenAddress = aave.addressSwitch[req.endpoint][stake];
+
+    next();
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, `E0000 - aaveNetwork`, e.message);
   }
 };
 
@@ -229,9 +200,6 @@ module.exports = {
   checkBTCNetwork,
   etherscan,
   btcNetwork,
-<<<<<<< HEAD
   aaveNetwork,
-=======
   btcLastBlockHash,
->>>>>>> 1f9d906b47da6298d76371f4e752e24b156c0195
 };

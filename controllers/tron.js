@@ -1,21 +1,6 @@
 const cwr = require('../utils/createWebResp');
 const fetch = require('node-fetch');
 
-// test
-const test = async (req, res) => {
-  try
-  {
-    const {owner_address, frozen_duration, frozen_balance, receiver_address, resource} = req.body;
-
-    return cwr.createWebResp(res, 200, true);
-  }
-  catch (e)
-  {
-    return cwr.errorWebResp(res, 500, `E0000 - test`, e.message);
-  }
-};
-
-// check network status
 const getCheckNetworkStatus = async (req, res) => {
   try
   {
@@ -37,7 +22,6 @@ const getCheckNetworkStatus = async (req, res) => {
   }
 };
 
-// get latest block
 const getLatestBlock = async (req, res) => {
   try
   {
@@ -58,7 +42,6 @@ const getLatestBlock = async (req, res) => {
   }
 };
 
-// 동결 - 투표권 얻기
 const postFreeze = async (req, res) => {
   try
   {
@@ -89,7 +72,6 @@ const postFreeze = async (req, res) => {
   }
 };
 
-// 동결 해제
 const postUnFreeze = async (req, res) => {
   try
   {
@@ -118,7 +100,6 @@ const postUnFreeze = async (req, res) => {
   }
 };
 
-// 검증자 리스트 불러오기
 const getListWitnesses = async (req, res) => {
   try
   {
@@ -138,7 +119,6 @@ const getListWitnesses = async (req, res) => {
   }
 };
 
-// 리워드 받기
 const postGetReward = async (req, res) => {
   try
   {
@@ -165,7 +145,6 @@ const postGetReward = async (req, res) => {
   }
 };
 
-// 해당 검증자에게 투표하기
 const postVoteWitnessAccount = async (req, res) => {
   try
   {
@@ -199,7 +178,6 @@ const postVoteWitnessAccount = async (req, res) => {
   }
 };
 
-// ??
 const postWithdrawBalance = async (req, res) => {
   try
   {
@@ -226,7 +204,6 @@ const postWithdrawBalance = async (req, res) => {
   }
 };
 
-// ?? 다음 투표까지 남은 시간????
 const getNextMaintenanceTime = async (req, res) => {
   try
   {
@@ -246,7 +223,6 @@ const getNextMaintenanceTime = async (req, res) => {
   }
 };
 
-// 내 트론 에너지, 대역폭 조회하기
 const getTronPowerInfo = async (req, res) => {
   try
   {
@@ -266,7 +242,6 @@ const getTronPowerInfo = async (req, res) => {
   }
 };
 
-// 트론 전송하기
 const postSendTRX = async (req,res) => {
   try
   {
@@ -315,7 +290,6 @@ const postSendTRX = async (req,res) => {
 
 
 module.exports = {
-  test,
   postFreeze,
   postUnFreeze,
   getListWitnesses,
