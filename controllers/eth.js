@@ -104,10 +104,10 @@ const postSendToken = async (req, res) => {
       contractAddress,
     );
     const decimal = Math.pow(10, await contract.methods.decimals().call());
-    let totalAmount = (decimal * amountToken).toLocaleString('fullwide', {
+    const totalAmount = (decimal * amountToken).toLocaleString('fullwide', {
       useGrouping: false,
     });
-    let contractRawTx = await contract.methods
+    const contractRawTx = await contract.methods
       .transfer(toWalletAddress, req.web3.utils.toHex(totalAmount))
       .encodeABI();
 
@@ -159,7 +159,7 @@ const postGenerateMnemonic = async (req, res) => {
 const getValidateMnemonic = async (req, res) => {
   try {
     const {mnemonic} = req.query;
-    let result = bip39.validateMnemonic(mnemonic);
+    const result = bip39.validateMnemonic(mnemonic);
     return cwr.createWebResp(res, 200, result);
   } catch (e) {
     return cwr.errorWebResp(res, 500, 'E0000 - GetValidateMnemonic', e.message);
