@@ -173,6 +173,10 @@ const getGasPrice = async (req, res) => {
     let getBlock = async () => {
       let i = 0;
       while (true) {
+        if(blockNumber - i < 1)
+        {
+          throw "end block number";
+        }
         let block = await req.web3.eth.getBlock(blockNumber - i);
         i = i + 1;
         if (block.transactions.length > 0) {
