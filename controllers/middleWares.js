@@ -6,7 +6,14 @@ const eth = require('../config/ETH/eth');
 const aave = require('../config/AAVE/aave');
 const Web3 = require('web3');
 const Client = require('bitcoin-core');
-const { v1, v2, StakingInterface, TxBuilderV2, Network, Market } = require('@aave/protocol-js');
+const {
+  v1,
+  v2,
+  StakingInterface,
+  TxBuilderV2,
+  Network,
+  Market,
+} = require('@aave/protocol-js');
 
 ////////////////////// Middleware for XLM //////////////////////
 const isValidMnemonic = async (req, res, next) => {
@@ -73,9 +80,17 @@ const xlmAsset = async (req, res, next) => {
 const web3 = async (req, res, next) => {
   try {
     req.endpoint = req.body.endpoint?.trim() || req.query.endpoint?.trim();
-    req.baseUrl = eth.switchBaseUrl(req.endpoint);
-    req.httpProvider = new Web3.providers.HttpProvider(req.baseUrl + process.env.INFURA_PROJECT_ID);
+    const parseEndpoint = eth.switchBaseUrl(req.endpoint);
+    req.baseUrl = parseEndpoint.baseUrl;
+    if (parseEndpoint.custom) {
+      req.httpProvider = new Web3.providers.HttpProvider(req.baseUrl);
+    } else {
+      req.httpProvider = new Web3.providers.HttpProvider(
+        req.baseUrl + process.env.INFURA_PROJECT_ID,
+      );
+    }
     req.web3 = new Web3(req.httpProvider);
+    const blockInfo = await req.web3.eth.net.getId();
     next();
   } catch (e) {
     return cwr.errorWebResp(res, 500, `E0000 - infuraBaseUrl`, e.message);
