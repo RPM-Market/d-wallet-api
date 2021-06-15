@@ -27,6 +27,7 @@ const xlmRouter = require('./routes/api/xlm');
 const ethRouter = require('./routes/api/eth');
 const aaveRouter = require('./routes/api/aave');
 const tronRouter = require('./routes/api/tron');
+const atemRouter = require('./routes/api/atem');
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use(`${version}/xlm`, xlmRouter);
 app.use(`${version}/eth`, ethRouter);
 app.use(`${version}/aave`, aaveRouter);
 app.use(`${version}/tron`, tronRouter);
+app.use(`${version}/atem`, atemRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

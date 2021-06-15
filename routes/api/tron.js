@@ -3,22 +3,30 @@ const router = express.Router();
 const tronController = require('../../controllers/tron');
 const mw = require('../../controllers/middleWares');
 
-router.get('/listWitnesses', tronController.getListWitnesses);
+router.get('/accountInfo', mw.tronNetwork, tronController.getAccountInfo);
 
-router.get('/nextMaintenanceTime', tronController.getNextMaintenanceTime);
+router.get('/balance', mw.tronNetwork, tronController.getBalance);
 
-router.get('/tronPowerInfo', tronController.getTronPowerInfo);
+router.post('/sendTrx', mw.tronNetwork, tronController.postSendTrx);
 
-router.post('/freeze', tronController.postFreeze);
+router.get('/trcBalance', mw.tronNetwork, tronController.getTrcBalance);
 
-router.post('/unFreeze', tronController.postUnFreeze);
+router.post('/sendTrc', mw.tronNetwork, tronController.postSendTrc);
 
-router.post('/getReward', tronController.postGetReward);
+router.get('/listWitnesses', mw.tronNetwork, tronController.getListWitnesses);
 
-router.post('/voteWitnessAccount', tronController.postVoteWitnessAccount);
+router.get('/nextMaintenanceTime', mw.tronNetwork, tronController.getNextMaintenanceTime);
 
-router.post('/withdrawBalance', tronController.postWithdrawBalance);
+router.get('/tronPowerInfo', mw.tronNetwork, tronController.getTronPowerInfo);
 
-router.post('/sendTRX', tronController.postSendTRX);
+router.post('/freeze', mw.tronNetwork, tronController.postFreeze);
+
+router.post('/unFreeze', mw.tronNetwork, tronController.postUnFreeze);
+
+router.post('/getReward', mw.tronNetwork, tronController.postGetReward);
+
+router.post('/voteWitnessAccount', mw.tronNetwork, tronController.postVoteWitnessAccount);
+
+router.post('/withdrawBalance', mw.tronNetwork, tronController.postWithdrawBalance);
 
 module.exports = router;

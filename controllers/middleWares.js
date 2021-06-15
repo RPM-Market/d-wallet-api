@@ -6,6 +6,7 @@ const eth = require('../config/ETH/eth');
 const aave = require('../config/AAVE/aave');
 const Web3 = require('web3');
 const Client = require('bitcoin-core');
+const TronWeb = require('tronweb');
 const { v1, v2, StakingInterface, TxBuilderV2, Network, Market } = require('@aave/protocol-js');
 
 ////////////////////// Middleware for XLM //////////////////////
@@ -84,7 +85,7 @@ const web3 = async (req, res, next) => {
       req.httpProvider = new Web3.providers.HttpProvider(req.baseUrl + process.env.INFURA_PROJECT_ID);
     }
     req.web3 = new Web3(req.httpProvider);
-    const blockInfo = await req.web3.eth.net.getId();
+    //const blockInfo = await req.web3.eth.net.getId();
     next();
   } catch (e) {
     return cwr.errorWebResp(res, 500, `E0000 - infuraBaseUrl`, e.message);
@@ -200,6 +201,21 @@ const aaveNetwork = async (req, res, next) => {
   }
 };
 
+////////////////////// Middleware for Tron //////////////////////
+const tronNetwork = async (req, res, next) => {
+  try {
+    req.tronWeb = new TronWeb({
+      fullHost: 'https://api.trongrid.io',
+      headers: { "TRON-PRO-API-KEY": process.env.TRONGRID_PUBLIC_KEY },
+      //privateKey: 'your private key'
+    });
+    next();
+  } catch (e) {
+    return cwr.errorWebResp(res, 500, `E0000 - tronNetwork`, e.message);
+  }
+};
+
+
 module.exports = {
   isValidMnemonic,
   xlmNetwork,
@@ -211,4 +227,5 @@ module.exports = {
   btcNetwork,
   aaveNetwork,
   btcLastBlockHash,
+  tronNetwork,
 };
